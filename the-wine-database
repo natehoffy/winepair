@@ -1,0 +1,83 @@
+-- ------------------------------------
+-- Create the database with db_name = Wine
+-- ------------------------------------
+
+CREATE DATABASE IF NOT EXISTS 'Wine';
+
+-- --------------------------------------------------
+-- Create the various tables within the Wine database
+-- --------------------------------------------------
+
+CREATE TABLE Colors (
+	Color_Code INT NOT NULL,
+	Color_Name VARCHAR(4) NOT NULL,
+	
+	PRIMARY KEY(Color_Code)
+);
+
+/*DESCRIBE Colors;*/
+
+CREATE TABLE Vintage (
+	Vintage_Year CHAR(4) NOT NULL,
+	
+	PRIMARY KEY(Vintage_Year)
+);
+
+/*DESCRIBE Vintage;*/
+
+CREATE TABLE Food (
+	Food_Code INT NOT NULL,
+	Food_Name VARCHAR(50) NOT NULL,
+	Food_Type VARCHAR(50),
+	
+	PRIMARY KEY(Food_Code)
+);
+
+/*DESCRIBE FOOD;*/
+
+CREATE TABLE Occassion (
+	Occassion_Code INT NOT NULL,
+	Occassion_Name VARCHAR(50),
+	Occassion_Type VARCHAR(50) NOT NULL,
+	
+	PRIMARY KEY(Occassion_Code)
+);
+
+/*DESCRIBE Occassion;*/
+
+CREATE TABLE Country (
+	Country_Code_Num INT NOT NULL,
+	Country_Code_Alpha2 CHAR(2) NOT NULL,
+	Country_Code_Alpha3 CHAR(3) NOT NULL,
+	Country_Name VARCHAR(50) NOT NULL,
+	
+	PRIMARY KEY(Country_Code_Num)
+);
+
+/*DESCRIBE Country;*/
+
+-- ---------------------------------------
+-- Code below here isn't currently working
+-- ---------------------------------------
+
+CREATE TABLE Appellation (
+	Appellation_Code VARCHAR(100) NOT NULL,
+	Appellation_Name VARCHAR(100) NOT NULL,
+	Country_Code_Num INT NOT NULL,
+	Country_Code_Alpha2 CHAR(2) NOT NULL,
+	Country_Code_Alpha3 CHAR(3) NOT NULL,
+	
+	PRIMARY KEY (Appellation_Code),
+	
+	FOREIGN KEY (Country_Code_Num)
+		REFERENCES Country (Country_Code_Num)
+		ON UPDATE CASCADE ON DELETE RESTRICT,
+		
+	FOREIGN KEY (Country_Code_Alpha2)
+		REFERENCES Country (Country_Code_Alpha2)
+		ON UPDATE CASCADE ON DELETE RESTRICT,
+		
+	FOREIGN KEY (Country_Code_Alpha3)
+		REFERENCES Country (Country_Code_Alpha3)
+		ON UPDATE CASCADE ON DELETE RESTRICT
+)	ENGINE=INNODB;
