@@ -1,0 +1,19 @@
+/**MYSQL**/
+//download mysql server at
+http://dev.mysql.com/downloads/mysql/
+
+//Open terminal and navigate to
+cd /usr/local/mysql/bin
+
+//login with temporary password
+./mysql -u root -p
+
+//type in the temporary password
+...
+
+//Stop the expiration of userpw !!!NOT RECOMMENDED ON REAL SERVER!!!
+ALTER USER 'root'@'localhost' PASSWORD EXPIRE NEVER;
+
+//next change the password, otherwise you are not allowed to do anything
+//at and to the database
+SET PASSWORD FOR 'root'@'localhost' = PASSWORD('new-password-here');
