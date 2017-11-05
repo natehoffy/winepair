@@ -1,6 +1,30 @@
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'BookBookshelf')
+BEGIN
+    DROP TABLE BookBookshelf
+END
+GO
+
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Bookshelf')
 BEGIN
     DROP TABLE Bookshelf
+END
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'BookBookSubject')
+BEGIN
+    DROP TABLE BookBookSubject
+END
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'BookAuthor')
+BEGIN
+    DROP TABLE BookAuthor
+END
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Book')
+BEGIN
+    DROP TABLE Book
 END
 GO
 
@@ -16,8 +40,73 @@ BEGIN
 END
 GO
 
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Author')
+BEGIN
+    DROP TABLE Author
+END
+GO
+
 CREATE TABLE Bookshelf (
     BookshelfID int identity primary key,
-    ShelfNumber char(20)
+    ShelfNumber char(20) not null
 )
+GO
+
+CREATE TABLE Publisher (
+    PublisherID int identity primary key,
+    PublisherName char(40) not null
+)
+GO
+
+CREATE TABLE BookSubject (
+    SubjectID int identity,
+    SubjectText char(50) not null,
+    CONSTRAINT pk_BookSubject PRIMARY KEY (SubjectID)
+)
+GO
+
+CREATE TABLE Author (
+    AuthorID int identity,
+    ForeName char(30) not null,
+    SurName char(30) not null,
+    LOCName char(100) not null,
+)
+GO
+
+ALTER TABLE Author
+    ADD CONSTRAINT pk_Author PRIMARY KEY (AuthorID)
+    
+CREATE TABLE Book (
+    BookID int identity primary key,
+    Title char(50) not null,
+    ISBN char(13) not null,
+    PublishDate datetime not null,
+    PublisherID int FOREIGN KEY REFERENCES Publisher(PublisherID),
+)
+GO
+
+CREATE TABLE BookBookSubject (
+    BookBookSubjectID int identity primary key,
+    BookID int FOREIGN KEY REFERENCES Book(BookID) not null,
+    SubjectID int not null,
+    CONSTRAINT fk_bbs_bs FOREIGN KEY SubjectID REFERENCES BookSubject(SubjectID)
+)
+GO
+
+CREATE TABLE BookBookshelf (
+    BookBookshelfID int identity primary key,
+    BookID int FOREIGN KEY REFERENCES Book(BookID) not null,
+    BookshelfID int FOREIGN KEY REFERENCES Bookshelf(BookshelfID) not null
+)
+GO
+
+CREATE TABLE BookAuthor (
+    BookAuthorID int identity primary key,
+    BookID int FOREIGN KEY REFERENCES Book(BookID) not null,
+    AuthorID int FOREIGN KEY REFERENCES AUthor(AuthorID) not null
+)
+GO
+
+ALTER TABLE BookAuthor ADD
+    CONSTRAINT uk_ba UNIQUE (BookID, AuthorID)
 GO
