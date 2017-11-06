@@ -1,41 +1,41 @@
--- ------------------------------------
--- Create the database with db_name = Wine
--- ------------------------------------
+-- --------------------------------------------------------------------------------------------------------
+-- First, create the Wine database 
+-- --------------------------------------------------------------------------------------------------------
 
-CREATE DATABASE IF NOT EXISTS 'Wine';
+CREATE DATABASE Wine;
 
--- --------------------------------------------------
--- Create the Colors table
--- --------------------------------------------------
+-- --------------------------------------------------------------------------------------------------------
+-- /* Create Colors table */
+-- --------------------------------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS Colors;
 
-CREATE TABLE Colors (
+CREATE TABLE IF NOT EXISTS Colors (
 	Color_Code INT NOT NULL,
 	Color_Name VARCHAR(4) NOT NULL,
 	
-	PRIMARY KEY(Color_Code)
+	PRIMARY KEY (Color_Code)
 );
 
 # DESCRIBE Colors;
 
--- ----------------------------------------------------------------------------------------------
--- Creating the Vintage Table
--- ----------------------------------------------------------------------------------------------
+-- --------------------------------------------------------------------------------------------------------
+-- Create Vintage table
+-- --------------------------------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS Vintage;
 
 CREATE TABLE IF NOT EXISTS Vintage (
-	Vintage_Year CHAR(4) NOT NULL,
+	Vintage_Year INT NOT NULL,
 	
-	PRIMARY KEY(Vintage_Year)
+	PRIMARY KEY (Vintage_Year)
 );
 
 # DESCRIBE Vintage;
 
--- ----------------------------------------------------------------------------------------------
--- Creating the Food Table
--- ----------------------------------------------------------------------------------------------
+-- --------------------------------------------------------------------------------------------------------
+-- Create Food table
+-- --------------------------------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS Food;
 
@@ -44,30 +44,30 @@ CREATE TABLE IF NOT EXISTS Food (
 	Food_Name VARCHAR(50) NOT NULL,
 	Food_Type VARCHAR(50),
 	
-	PRIMARY KEY(Food_Code)
+	PRIMARY KEY (Food_Code)
 );
 
-# DESCRIBE FOOD;
+# DESCRIBE Food;
 
--- ----------------------------------------------------------------------------------------------
--- Creating the Occassion Table
--- ----------------------------------------------------------------------------------------------
+-- --------------------------------------------------------------------------------------------------------
+-- Create Occassion table
+-- --------------------------------------------------------------------------------------------------------
 
-DROP TABLE IF EXITS Occassion;
+DROP TABLE IF EXISTS Occassion;
 
 CREATE TABLE IF NOT EXISTS Occassion (
 	Occassion_Code INT NOT NULL,
 	Occassion_Name VARCHAR(50),
 	Occassion_Type VARCHAR(50) NOT NULL,
 	
-	PRIMARY KEY(Occassion_Code)
+	PRIMARY KEY (Occassion_Code)
 );
 
 # DESCRIBE Occassion;
 
--- ----------------------------------------------------------------------------------------------
--- Creating the Country Table
--- ----------------------------------------------------------------------------------------------
+-- --------------------------------------------------------------------------------------------------------
+-- Create Country table
+-- --------------------------------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS Country;
 
@@ -77,39 +77,158 @@ CREATE TABLE IF NOT EXISTS Country (
 	Country_Code_Alpha3 CHAR(3) NOT NULL,
 	Country_Name VARCHAR(50) NOT NULL,
 	
-	PRIMARY KEY(Country_Code_Num)
+	PRIMARY KEY (Country_Code_Num),
+	UNIQUE INDEX (Country_Code_Num),
+	UNIQUE INDEX (Country_Code_Alpha2),
+	UNIQUE INDEX (Country_Code_Alpha3),
+	UNIQUE INDEX (Country_Name)
 );
 
 # DESCRIBE Country;
 
--- ----------------------------------------------------------------------------------------------
--- Creating the Appellation Table
--- ----------------------------------------------------------------------------------------------
-
--- ---------------------------------------
--- Code below here isn't currently working
--- ---------------------------------------
+-- --------------------------------------------------------------------------------------------------------
+-- Create Appellation table
+-- --------------------------------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS Appellation;
 
 CREATE TABLE IF NOT EXISTS Appellation (
-	Appellation_Code VARCHAR(100) NOT NULL,
+	Appellation_Code INT NOT NULL,
 	Appellation_Name VARCHAR(100) NOT NULL,
-	Country_Code_Num INT NOT NULL,
-	Country_Code_Alpha2 CHAR(2) NOT NULL,
-	Country_Code_Alpha3 CHAR(3) NOT NULL,
+	Appellation_Country_Code_Num INT NOT NULL,
+	Appellation_Country_Code_Alpha2 CHAR(2) NOT NULL,
+	Appellation_Country_Code_Alpha3 CHAR(3) NOT NULL,
 	
 	PRIMARY KEY (Appellation_Code),
+	UNIQUE INDEX (Appellation_Country_Code_Num),
+	UNIQUE INDEX (Appellation_Country_Code_Alpha2),
+	UNIQUE INDEX (Appellation_Country_Code_Alpha3),
+	UNIQUE INDEX (Appellation_Name),
+	UNIQUE INDEX (Appellation_Code),
 	
-	FOREIGN KEY (Country_Code_Num)
-		REFERENCES Country (Country_Code_Num)
-		ON UPDATE CASCADE ON DELETE RESTRICT,
-		
-	FOREIGN KEY (Country_Code_Alpha2)
-		REFERENCES Country (Country_Code_Alpha2)
-		ON UPDATE CASCADE ON DELETE RESTRICT,
-		
-	FOREIGN KEY (Country_Code_Alpha3)
-		REFERENCES Country (Country_Code_Alpha3)
-		ON UPDATE CASCADE ON DELETE RESTRICT
+	FOREIGN KEY (Appellation_Country_Code_Num) REFERENCES Country(Country_Code_Num) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (Appellation_country_Code_Alpha2) REFERENCES Country(Country_Code_Alpha2) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (Appellation_Country_Code_Alpha3) REFERENCES Country(Country_Code_Alpha3) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+# DESCRIBE Appellation;
+
+-- --------------------------------------------------------------------------------------------------------
+-- Create Winery table
+-- --------------------------------------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS Winery;
+
+CREATE TABLE IF NOT EXISTS Winery (
+	Winery_Code INT NOT NULL,
+	Winery_Name VARCHAR(100) NOT NULL,
+	Winery_Description TEXT,
+	Winery_Street VARCHAR(50) NOT NULL,
+	Winery_City VARCHAR(50) NOT NULL,
+	Winery_State VARCHAR(50),
+	Winery_Postal_Code VARCHAR(10) NOT NULL,
+	Winery_Country_Name VARCHAR(50) NOT NULL,
+	Winery_Appellation_Name VARCHAR(100) NOT NULL,
+	
+	PRIMARY KEY (Winery_Code),
+	UNIQUE INDEX (Winery_Country_Name),
+	UNIQUE INDEX (Winery_Appellation_Name),
+	UNIQUE INDEX (Winery_Code),
+	
+	FOREIGN KEY (Winery_Country_Name) REFERENCES Country(Country_Name) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (Winery_Appellation_Name) REFERENCES Appellation(Appellation_Name) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+# DESCRIBE Winery;
+
+-- --------------------------------------------------------------------------------------------------------
+-- Create Vineyards table
+-- --------------------------------------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS Vineyard;
+
+CREATE TABLE IF NOT EXISTS Vineyard (
+	Vineyard_Code INT NOT NULL,
+	Vineyard_Winery_Code INT NOT NULL,
+	Vineyard_Name VARCHAR(100) NOT NULL,
+	Vineyard_Street VARCHAR(50) NOT NULL,
+	Vineyard_City VARCHAR(50) NOT NULL,
+	Vineyard_State VARCHAR(50),
+	Vineyard_Postal_Code VARCHAR(10) NOT NULL,
+	Vineyard_Country_Name VARCHAR(50) NOT NULL,
+	Vineyard_Appellation_Name VARCHAR(100) NOT NULL,
+
+	
+	
+	PRIMARY KEY (Vineyard_Code),
+	UNIQUE INDEX (Vineyard_Code),
+	UNIQUE INDEX (Vineyard_Winery_Code),
+	UNIQUE INDEX (Vineyard_Country_Name),
+	UNIQUE INDEX (Vineyard_Appellation_Name),
+	
+	FOREIGN KEY (Vineyard_Winery_Code) REFERENCES Winery(Winery_Code) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (Vineyard_Country_Name) REFERENCES Country(Country_Name) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (Vineyard_Appellation_Name) REFERENCES Appellation(Appellation_Name) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+# DESCRIBE Vineyard;
+
+-- --------------------------------------------------------------------------------------------------------
+-- Create Grape_Variety table
+-- --------------------------------------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS Grape_Variety;
+
+CREATE TABLE IF NOT EXISTS Grape_Variety (
+	Grape_Variety_Code INT NOT NULL,
+	Grape_Country INT NOT NULL,
+	Grape_Appellation INT NOT NULL,
+	Grape_Variety_Name VARCHAR(50) NOT NULL,
+	
+	PRIMARY KEY (Grape_Variety_Code),
+	UNIQUE INDEX (Grape_Variety_Code),
+	UNIQUE INDEX (Grape_Country),
+	UNIQUE INDEX (Grape_Appellation),
+	
+	FOREIGN KEY (Grape_Country) REFERENCES Country(Country_Code_Num) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (Grape_Appellation) REFERENCES Appellation(Appellation_Code) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+#DESCRIBE Grape_Variety;
+
+-- --------------------------------------------------------------------------------------------------------
+-- Create Wine table
+-- --------------------------------------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS Wine;
+
+CREATE TABLE IF NOT EXISTS Wine (
+	Wine_Code INT NOT NULL,
+	Wine_Color_Code INT NOT NULL,
+	Wine_Country_Code_Num INT NOT NULL,
+	Grape_Variety_Code INT NOT NULL,
+	Wine_Appellation_Code INT NOT NULL,
+	Wine_Vineyard_Code INT NOT NULL,
+	Wine_Vintage INT NOT NULL,
+	Wine_Food_Code INT NOT NULL,
+	Wine_Occassion_Code INT NOT NULL,
+	Wine_Name VARCHAR(50),
+	Wine_Price DECIMAL NOT NULL,
+	Years_Lay_Down INT NOT NULL,
+	
+	PRIMARY KEY (Wine_Code),
+	UNIQUE INDEX (Wine_Code),
+	
+	FOREIGN KEY (Wine_Color_Code) REFERENCES Colors(Color_Code) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (Wine_Country_Code_Num) REFERENCES Country(Country_Code_Num) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (Grape_Variety_Code) REFERENCES Grape_Variety(Grape_Variety_Code) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (Wine_Appellation_Code) REFERENCES Appellation(Appellation_Code) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (Wine_Vineyard_Code) REFERENCES Vineyard(Vineyard_Code) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (Wine_Vintage) REFERENCES Vintage(Vintage_Year) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (Wine_Food_Code) REFERENCES Food(Food_Code) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (Wine_Occassion_Code) REFERENCES Occassion(Occassion_Code) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+# DESCRIBE Wine;
+
+
