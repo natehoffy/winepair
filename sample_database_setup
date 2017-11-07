@@ -110,3 +110,21 @@ GO
 ALTER TABLE BookAuthor ADD
     CONSTRAINT uk_ba UNIQUE (BookID, AuthorID)
 GO
+
+INSERT INTO Bookshelf (ShelfNumber) VALUES
+    ('1')
+    , ('2')
+    , ('Office')
+    , ('Family Room')
+    
+GO
+
+SELECT TOP 1000 [BookshelfID]
+        , [ShelfNumber]
+    FROM [IST659].[dbo].[Bookshelf]
+    
+INSERT INTO Bookshelf (ShelfNumber) VALUES
+    ('Bedroom')
+    
+INSERT INTO Author (Forename, Surname, LOCName)
+VALUES ('Bryan','Syverson','Bryan Syverson')
