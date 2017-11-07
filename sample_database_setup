@@ -111,6 +111,10 @@ ALTER TABLE BookAuthor ADD
     CONSTRAINT uk_ba UNIQUE (BookID, AuthorID)
 GO
 
+-- ------------------------------------------------------------------
+-- INSERT Statements
+-- ------------------------------------------------------------------
+
 INSERT INTO Bookshelf (ShelfNumber) VALUES
     ('1')
     , ('2')
@@ -128,3 +132,85 @@ INSERT INTO Bookshelf (ShelfNumber) VALUES
     
 INSERT INTO Author (Forename, Surname, LOCName)
 VALUES ('Bryan','Syverson','Bryan Syverson')
+
+-- ------------------------------------------------------------------
+-- SELECT Statements
+-- ------------------------------------------------------------------
+
+SELECT * FROM Author
+
+# the above will give us everything in Author table
+
+SELECT
+    Forename,
+    Surname,
+    LOCName
+FROM Author
+
+# the above gives us only columns listed
+
+SELECT
+    Surname + ',' + Forename AS FullName,
+    LOCName
+FROM Author
+
+# the above concatenates Surname & Forename and makes FullName
+
+SELECT
+    RTRIM(Surname) + ',' + RTRIM(Forename) AS FullName,
+    LOCName
+FROM Author
+
+# RTRIM trims up the field that we had stored as a CHAR variable type so there aren't a bunch of spaces in the output
+
+SELECT ShelfNumber FROM Bookshelf
+
+-- ------------------------------------------------------------------
+-- JOIN Statements
+-- ------------------------------------------------------------------
+
+SELECT
+    Book.Title,
+    Book.ISBN,
+    Book.PublisherID,
+    Book.PublisherName
+FROM Book
+JOIN Publisher ON Publisher.PublisherID /* Primary key of joining db */ = Book.PublisherId /* foreign key of joined db */
+
+-- ------------------------------------------------------------------
+-- UPDATE Statements
+-- ------------------------------------------------------------------
+
+SELECT * FROM Book
+JOIN BookBookshelf ON BookBookshelf.BookID = Book.BookID
+JOIN Bookshelf ON Bookshelf.BookshelfID = BookBookshelf.BookshelfID
+
+UPDATE BookBookshelf SET BookshelfID = 2 WHERE BookBookshelfID = 3
+
+UPDATE Book SET PublishDate = '1/1/2012' WHERE BookID = 1
+UPDATE Book SET PublishDate = '1/1/2013' WHERE BookID = 2
+UPDATE Book SET PublishDate = '1/1/2010' WHERE BookID = 3
+UPDATE Book SET PublishDate = '1/1/2015' WHERE BookID = 4
+UPDATE Book SET PublishDate = '1/1/2011' WHERE BookID = 5
+UPDATE Book SET PublishDate = '1/1/2013' WHERE BookID = 6
+
+-- ------------------------------------------------------------------
+-- DELETE Statements
+-- ------------------------------------------------------------------
+
+# DELETE table_name [WHERE condition]. cannot delete where dependencies exist
+
+DELETE Bookshelf WHERE ShelfNumber = 'Office'
+
+DELETE Bookshelf WHERE ShelfNumber = '1'
+
+
+
+
+
+
+
+
+
+
+
