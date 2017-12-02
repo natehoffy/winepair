@@ -40,3 +40,38 @@ INSERT INTO Vendor (VendorName)
 		('Spikey'),
 		('Tweebox'),
 		('Ernder Ermer');
+		
+DESCRIBE VendorProduct;
+
+SELECT * FROM Product;
+SELECT * FROM Vendor;
+
+INSERT INTO VendorProduct (Cost, ProductID, VendorID)
+	VALUES
+		(50, (SELECT ProductID FROM Product WHERE ProductName = 'Red Shoes'), (SELECT VendorID FROM Vendor WHERE VendorName = 'Spikey')),
+		(45, (SELECT ProductID FROM Product WHERE ProductName = 'Blue Shoes'), (SELECT VendorID FROM Vendor WHERE VendorName = 'Spikey')),
+		(30, (SELECT ProductID FROM Product WHERE ProductName = 'Green Shoes'), (SELECT VendorID FROM Vendor WHERE VendorName = 'Spikey')),
+		(55, (SELECT ProductID FROM Product WHERE ProductName = 'Red Shoes'), (SELECT VendorID FROM Vendor WHERE VendorName = 'Tweebox')),
+		(20, (SELECT ProductID FROM Product WHERE ProductName = 'Green Hat'), (SELECT VendorID FROM Vendor WHERE VendorName = 'Tweebox')),
+		(60, (SELECT ProductID FROM Product WHERE ProductName = 'Red Shoes'), (SELECT VendorID FROM Vendor WHERE VendorName = 'Ernder Ermer')),
+		(25, (SELECT ProductID FROM Product WHERE ProductName = 'Green Hat'), (SELECT VendorID FROM Vendor WHERE VendorName = 'Ernder Ermer'));
+		(0, (SELECT ProductID FROM Product WHERE ProductName = 'Blue Shorts'), (SELECT VendorID FROM Vendor WHERE VendorName = 'Spikey')),
+		
+		
+SELECT * FROM VendorProduct;
+
+Select * FROM Product;
+
+SELECT Product.ProductName, Vendor.VendorName, VendorProduct.Cost
+	FROM Product
+	JOIN VendorProduct ON VendorProduct.ProductID = Product.ProductID
+	JOIN Vendor ON Vendor.VendorID = VendorProduct.VendorID;
+ 		
+SELECT Product.ProductName AS 'Product Name', AVG(VendorProduct.Cost) AS 'Average Cost', MIN(VendorProduct.Cost) AS 'Minimum Cost', MAX(VendorProduct.Cost) AS 'Maximum Cost'
+	FROM Product
+	JOIN VendorProduct ON VendorProduct.ProductID = Product.ProductID
+	JOIN Vendor ON Vendor.VendorID = VendorProduct.VendorID
+	GROUP BY Product.ProductName;
+
+
+
