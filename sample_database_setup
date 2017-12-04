@@ -204,10 +204,50 @@ DELETE Bookshelf WHERE ShelfNumber = 'Office'
 
 DELETE Bookshelf WHERE ShelfNumber = '1'
 
+-- ------------------------------------------------------------------
+-- Creating Views
+-- ------------------------------------------------------------------
 
+if exists (select * from information_schema.views where table_name = 'ListBookshelfContents')
+then
+    drop view ListBookshelfContents
+end if;
 
+create view ListBookshelfContents AS
+select
+    Bookshelf.ShelfNumber,
+    BookBookshelf.*,
+    Book.Title
+from BookBookshelf
+join Bookshelf on BookBookshelf.BookshelfID = Bookshelf.BookshelfID
+join Book on Book.BookID = BookBookshelf.BookIDl;
 
+GO
 
+-- ------------------------------------------------------------------
+-- Creating Functions
+-- ------------------------------------------------------------------
+
+CREATE FUNCTION GetPublishYear (@bookid int)
+    returns int as
+        declare @pubyear int
+        select @pubyear = year(book.publishdate) from Book
+            where bookid = @bookid
+return @pubyear
+
+select Title, dbo.GetPublishYear(BookID) as PubYear from Book
+
+-- ------------------------------------------------------------------
+-- Creating Procedures
+-- ------------------------------------------------------------------
+
+CREATE PROCEDURE SetPublishDate ( 
+    @BookID int,
+    @PublishDate datetime
+) AS
+BEGIN
+    UPDATE Book SET PublishDate = @PublishDate WHERE BookID = @BookID
+END
 
 
 
