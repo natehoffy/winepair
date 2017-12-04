@@ -72,6 +72,186 @@ SELECT Product.ProductName AS 'Product Name', AVG(VendorProduct.Cost) AS 'Averag
 	JOIN VendorProduct ON VendorProduct.ProductID = Product.ProductID
 	JOIN Vendor ON Vendor.VendorID = VendorProduct.VendorID
 	GROUP BY Product.ProductName;
+	
+DELIMITER $$
+CREATE FUNCTION Add2Numbers (_a int, _b int)
+	RETURNS int
+	DETERMINISTIC
+	BEGIN
+		DECLARE _c int;
+		SET _c = _a + _b;
+		RETURN  _c;
+	END$$
+	DELIMITER ;
+
+SELECT Add2Numbers(2,2);
+
+CREATE VIEW ProductCosts AS
+SELECT 
+	Product.ProductName,
+	MIN(VendorProduct.Cost) AS MinCost,
+	AVG(VendorProduct.Cost) AS AvgCost,
+	MAX(VendorProduct.Cost) AS MaxCost
+FROM Product
+JOIN VendorProduct ON VendorProduct.ProductID = Product.ProductID
+GROUP BY
+	VendorProduct.ProductID, ProductName;
+
+SELECT * FROM ProductCosts
+
+CREATE VIEW ReorderProducts AS
+SELECT ProductName, QtyOnHand FROM Product
+	WHERE QtyOnHand < 5;
+	
+SELECT * FROM ReorderProducts;
+
+ DELIMITER $$
+    CREATE FUNCTION Profit (P_ProductID int, P_VendorID int, P_SellPrice decimal (12,4))
+    RETURNS decimal (12,4)
+    NOT DETERMINISTIC
+    BEGIN
+        DECLARE p_profit decimal (12,4);
+        SELECT DISTINCTROW P_SellPrice - Cost INTO p_profit FROM VendorProduct 
+        WHERE ProductID = P_ProductID AND VendorID = P_VendorID;
+        RETURN p_profit;
+    END$$
+    DELIMITER ;
+
+SELECT Profit(1,1,100) AS Profit;
+
+describe vendorproduct;
+
+select distinct 
+	product.productname as 'Product Name',
+	product.productdescription as 'Description',
+	product.qtyonhand as 'Qty On Hand',
+	vendor.vendorname as 'Vendor Name',
+	vendorproduct.vendorid as 'Vendor ID',
+	vendorproduct.cost as 'Cost'
+from product
+join vendorproduct on vendorproduct.productid = product.productid
+join vendor on vendor.vendorid = vendorproduct.vendorid
+where product.productid  = 1 
+order by vendorproduct.cost asc limit 1;
+
+delimiter $$
+create function PreferredVendor (pv_productid int)
+returns int
+deterministic
+begin
+	declare pv_preferredvendor int;
+	select vendorid into pv_preferredvendor
+	from vendorproduct
+	where productid = pv_productid
+	order by cost asc limit 1;
+	return pv_preferredvendor;
+end$$
+delimiter ;
+
+select distinct 
+	product.productname as 'Product Name',
+	product.productdescription as 'Description',
+	product.qtyonhand as 'Qty On Hand',
+	vendorproduct.cost as 'Cost'
+from product
+join vendorproduct on vendorproduct.productid = product.productid
+join vendor on vendor.vendorid = vendorproduct.vendorid
+where vendorproduct.vendorid  = preferredvendor(1) and product.productid = 1;
+
+
+DROP PROCEDURE IF EXISTS AddProduct;
+DELIMITER $$
+CREATE PROCEDURE AddProduct(_name varchar(30), _description varchar(255)) ### these might be different than your data types
+BEGIN
+	DECLARE productCount INT;
+	DECLARE resultId INT unsigned; ##### this might be different from your ProductId data type
+	DECLARE msg varchar(100);
+	SET productCount = (
+		SELECT COUNT(ProductID)
+		FROM Product 
+		WHERE ProductName = _name
+		);
+	IF productCount = 0 THEN
+		INSERT INTO Product (ProductName, ProductDescription) 
+		VALUES (_name, _description);
+	SET resultId = last_insert_id();
+	SET msg = 'Product inserted.';
+	ELSE
+	SET resultId = 0;
+	SET msg = 'Product already exists.';
+	END IF;
+
+SELECT resultId, msg;
+END$$
+DELIMITER ;
+
+call 
+	AddProduct ('Red Shirt', 'This is a red shirt');
+
+select * from product;
+
+describe product;
+
+alter table product 
+	alter column qtyonhand set default '1';
+
+delimiter $$
+create procedure AddProductWithVendor (_name char(30), _description varchar(255), _vendorid int, _cost decimal(12,4))
+begin
+    declare _productcount int;
+    declare _result int;
+    select _productcount = count(ProductID) into _productcount from product
+    where productname = _name;
+ 
+    if _productcount = 0
+    then
+        insert into product (productname, productdescription)
+        values (_name, _description);
+        set _result = last_insert_id();
+        insert into VendorProduct(ProductID, VendorID, Cost)
+        values(_result, _vendorid, _cost);
+    end if;
+end$$
+delimiter ;
+
+DROP PROCEDURE IF EXISTS AddProductWithVendor;
+DELIMITER $$
+CREATE PROCEDURE AddProductWithVendor (_name varchar(30), _description varchar(255), _vendorid int, _cost decimal(12,4))
+BEGIN
+	DECLARE productCount INT;
+	DECLARE resultId INT unsigned;
+	DECLARE msg varchar(100);
+	SET productCount = (
+		SELECT COUNT(ProductID)
+		FROM Product 
+		WHERE ProductName = _name
+		);
+	IF productCount = 0 THEN
+		INSERT INTO Product (ProductName, ProductDescription) 
+		VALUES (_name, _description);
+		SET resultId = last_insert_id();
+		insert into VendorProduct(ProductID,VendorID,Cost)
+		values (resultId, _vendorid, _cost);
+	SET msg = 'Product inserted.';
+	ELSE
+	SET resultId = 0;
+	SET msg = 'Product already exists.';
+	END IF;
+
+SELECT resultId, msg;
+END$$
+DELIMITER ;
+
+call
+	AddProductWithVendor ('Black Hat', 'This is a black hat', 1, 15);
+	
+select * from productcosts;
+
+select * from reorderproducts;
+
+select * from product;
+
+delete from product where productid = 11;
 
 
 
