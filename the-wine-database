@@ -11,13 +11,114 @@ CREATE DATABASE Wine;
 DROP TABLE IF EXISTS Colors;
 
 CREATE TABLE IF NOT EXISTS Colors (
-	Color_Code INT NOT NULL,
-	Color_Name VARCHAR(4) NOT NULL,
+	Color_Code INT NOT NULL auto_increment,
+	Color_Name VARCHAR(10) NOT NULL,
 	
 	PRIMARY KEY (Color_Code)
 );
 
 # DESCRIBE Colors;
+
+-- --------------------------------------------------------------------------------------------------------
+-- /* Insert data into the Colors table */
+-- --------------------------------------------------------------------------------------------------------
+
+insert into colors (color_name)
+	values
+		('White'),
+		('Red'),
+		('Rose');
+		
+select * from colors;
+
+-- --------------------------------------------------------------------------------------------------------
+-- Create Country table
+-- --------------------------------------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS Country;
+
+CREATE TABLE IF NOT EXISTS Country (
+	Country_Code_Num INT NOT NULL,
+	Country_Code_Alpha2 CHAR(2) NOT NULL,
+	Country_Code_Alpha3 CHAR(3) NOT NULL,
+	Country_Name VARCHAR(50) NOT NULL,
+	
+	PRIMARY KEY (Country_Code_Num),
+	UNIQUE INDEX (Country_Code_Num),
+	UNIQUE INDEX (Country_Code_Alpha2),
+	UNIQUE INDEX (Country_Code_Alpha3),
+	UNIQUE INDEX (Country_Name)
+);
+
+# DESCRIBE Country;
+
+-- --------------------------------------------------------------------------------------------------------
+-- Insert data into Country table
+-- --------------------------------------------------------------------------------------------------------
+
+insert into country (country_code_num,country_code_alpha2,country_code_alpha3,country_name)
+	values
+		(004,'AF','AFG','Afghanistan'),
+		(248,'AX','ALA','Åland Islands'),
+		(008,'AL','ALB','Albania'),
+		(012,'DZ','DZA','Algeria'),
+		(016,'AS','ASM','American Samoa'),
+		(020,'AD','AND','Andorra'),
+		(024,'AO','AGO','Angola'),
+		(660,'AI','AIA','Anguilla'),
+		(010,'AQ','ATA','Antarctica'),
+		(028,'AG','ATG','Antigua and Barbuda'),
+		(032,'AR','ARG','Argentina'),
+		(051,'AM','ARM','Armenia'),
+		(533,'AW','ABW','Aruba'),
+		(036,'AU','AUS','Australia'),
+		(040,'AT','AUT','Austria'),
+		(031,'AZ','AZE','Azerbaijan'),
+		(044,'BS','BHS','Bahamas'),
+		(048,'BH','BHR','Bahrain'),
+		(050,'BD','BGD','Bangladesh'),
+		(052,'BB','BRB','Barbados'),
+		(112,'BY','BLR','Belarus'),
+		(056,'BE','BEL','Belgium'),
+		(084,'BZ','BLZ','Belize'),
+		(204,'BJ','BEN','Benin'),
+		(060,'BM','BMU','Bermuda'),
+		(064,'BT','BTN','Bhutan'),
+		(068,'BO','BOL','Bolivia'),
+		(535,'BQ','BES','Bonaire, Sint Eustatues and Saba'),
+		(070,'BA','BIH','Bosnia and Herzegovina'),
+		(072,'BW','BWA','Botswana'),
+		(074,'BV','BVT','Bouvet Island'),
+		(076,'BR','BRA','Brazil'),
+		(086,'IO','IOT','British Indian Ocean Territory'),
+		(096,'BN','BRN','Brunei Darussalam'),
+		(100,'BG','BGR','Bulgaria'),
+		(854,'BF','BFA','Burkina Faso'),
+		(108,'BI','BDI','Burundi'),
+		(132,'CV','CPV','Cabo Verde'),
+		(116,'KH','KHM','Camboadia'),
+		(120,'CM','CMR','Cameroon'),
+		(124,'CA','CAN','Canada'),
+		(136,'KY','CYM','Cayman Islands'),
+		(140,'CF','CAF','Central African Republic'),
+		(148,'TD','TCD','Chad'),
+		(152,'CL','CHL','Chile'),
+		(156,'CN','CHN','China'),
+		(162,'CX','CXR','Christmas Island'),
+		(166,'CC','CCK','Cocos Islands'),
+		(170,'CO','COL','Colombia'),
+		(174,'KM','COM','Comoros'),
+		(180,'CD','COD','Democratic Republic of Congo'),
+		(178,'CG','COG','Congo'),
+		(184,'CK','COK','Cook Islands'),
+		(188,'CR','CRI','Costa Rica'),
+		(384,'CI','CIV','Ivory Coast'),
+		(191,'HR','HRV','Croatia'),
+		(192,'CU','CUB','Cuba'),
+		(531,'CW','CUW','Curacao'),
+		(196,'CY','CYP','Cyprus'),
+		(203,'CZ','CZE','Czechia'),
+		
 
 -- --------------------------------------------------------------------------------------------------------
 -- Create Vintage table
@@ -64,27 +165,6 @@ CREATE TABLE IF NOT EXISTS Occassion (
 );
 
 # DESCRIBE Occassion;
-
--- --------------------------------------------------------------------------------------------------------
--- Create Country table
--- --------------------------------------------------------------------------------------------------------
-
-DROP TABLE IF EXISTS Country;
-
-CREATE TABLE IF NOT EXISTS Country (
-	Country_Code_Num INT NOT NULL,
-	Country_Code_Alpha2 CHAR(2) NOT NULL,
-	Country_Code_Alpha3 CHAR(3) NOT NULL,
-	Country_Name VARCHAR(50) NOT NULL,
-	
-	PRIMARY KEY (Country_Code_Num),
-	UNIQUE INDEX (Country_Code_Num),
-	UNIQUE INDEX (Country_Code_Alpha2),
-	UNIQUE INDEX (Country_Code_Alpha3),
-	UNIQUE INDEX (Country_Name)
-);
-
-# DESCRIBE Country;
 
 -- --------------------------------------------------------------------------------------------------------
 -- Create Appellation table
