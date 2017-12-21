@@ -465,6 +465,12 @@ CREATE TABLE IF NOT EXISTS Appellation (
 
 insert into appellation (appellation_name,appellation_country_code_num,appellation_country_code_alpha2,appellation_country_code_alpha3)
 	values
+		('Olifants River',(select country_code_num from country where country_name = 'South Africa'),(select country_code_alpha2 from country where country_name = 'South Africa'),(select country_code_alpha3 from country where country_name = 'South Africa')),
+		('Orange River',(select country_code_num from country where country_name = 'South Africa'),(select country_code_alpha2 from country where country_name = 'South Africa'),(select country_code_alpha3 from country where country_name = 'South Africa')),
+		('Klein Karoo',(select country_code_num from country where country_name = 'South Africa'),(select country_code_alpha2 from country where country_name = 'South Africa'),(select country_code_alpha3 from country where country_name = 'South Africa')),
+		('Breede River Valley',(select country_code_num from country where country_name = 'South Africa'),(select country_code_alpha2 from country where country_name = 'South Africa'),(select country_code_alpha3 from country where country_name = 'South Africa')),
+		('Cape South Coast',(select country_code_num from country where country_name = 'South Africa'),(select country_code_alpha2 from country where country_name = 'South Africa'),(select country_code_alpha3 from country where country_name = 'South Africa')),
+		('Coastal Region',(select country_code_num from country where country_name = 'South Africa'),(select country_code_alpha2 from country where country_name = 'South Africa'),(select country_code_alpha3 from country where country_name = 'South Africa')),
 		('Sonoita AVA',(select country_code_num from country where country_name = 'United States of America'),(select country_code_alpha2 from country where country_name = 'United States of America'),(select country_code_alpha3 from country where country_name = 'United States of America')),
 		('Wilcox AVA',(select country_code_num from country where country_name = 'United States of America'),(select country_code_alpha2 from country where country_name = 'United States of America'),(select country_code_alpha3 from country where country_name = 'United States of America')),
 		('Altus AVA',(select country_code_num from country where country_name = 'United States of America'),(select country_code_alpha2 from country where country_name = 'United States of America'),(select country_code_alpha3 from country where country_name = 'United States of America')),
@@ -1203,21 +1209,105 @@ insert into Winery (Winery_Name,Winery_Street,Winery_City,Winery_State,Winery_Po
 DROP TABLE IF EXISTS Grape_Variety;
 
 CREATE TABLE IF NOT EXISTS Grape_Variety (
-	Grape_Variety_Code INT NOT NULL,
-	Grape_Country INT NOT NULL,
-	Grape_Appellation INT NOT NULL,
+	Grape_Variety_Code INT NOT NULL auto_increment,
 	Grape_Variety_Name VARCHAR(50) NOT NULL,
 	
-	PRIMARY KEY (Grape_Variety_Code),
-	UNIQUE INDEX (Grape_Variety_Code),
-	UNIQUE INDEX (Grape_Country),
-	UNIQUE INDEX (Grape_Appellation),
-	
-	FOREIGN KEY (Grape_Country) REFERENCES Country(Country_Code_Num) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (Grape_Appellation) REFERENCES Appellation(Appellation_Code) ON DELETE CASCADE ON UPDATE CASCADE
+	PRIMARY KEY (Grape_Variety_Code)
 );
 
 #DESCRIBE Grape_Variety;
+
+-- --------------------------------------------------------------------------------------------------------
+-- Insert data into the Grape_Variety table
+-- --------------------------------------------------------------------------------------------------------
+
+insert into grape_variety (grape_variety_name)
+	values
+		('Albariño'),
+		('Aligoté'),
+		('Amarone'),
+		('Arneis'),
+		('Asti Spumante'),
+		('Auslese'),
+		('Banylus'),
+		('Barbaresco'),
+		('Bardolino'),
+		('Barolo'),
+		('Beaujolais'),
+		('Blanc de Blancs'),
+		('Blanc de Noirs'),
+		('Blush'),
+		('Boal or Bual'),
+		('Brunello'),
+		('Cabernet Franc'),
+		('Cabernet Sauvignon'),
+		('Carignan'),
+		('Carmenere'),
+		('Cava'),
+		('Charbono'),
+		('Champagne'),
+		('Chardonnay'),
+		('Châteauneuf-du-Pape'),
+		('Chenin Blanc'),
+		('Chianti'),
+		('Chianti Classico'),
+		('Claret'),
+		('Colombard'),
+		('Constantia'),
+		('Cortese'),
+		('Dolcetto'),
+		('Eiswein'),
+		('Frascati'),
+		('Fumé Blanc'),
+		('Gamay'),
+		('Gamay Beaujolais'),
+		('Gattinara'),
+		('Gewürztraminer'),
+		('Grappa'),
+		('Grenache'),
+		('Johannisberg Riesling'),
+		('Kir'),
+		('Lambrusco'),
+		('Liebfraumilch'),
+		('Madeira'),
+		('Malbec'),
+		('Marc'),
+		('Marsala'),
+		('Marsanne'),
+		('Mead'),
+		('Meritage'),
+		('Merlot'),
+		('Montepulciano'),
+		('Moscato'),
+		('Mourvedre'),
+		('Müller-Thurgau'),
+		('Muscat'),
+		('Nebbiolo'),
+		('Petit Verdot'),
+		('Petite Sirah'),
+		('Pinot Blanc'),
+		('Pinot Grigio/Pinot Gris'),
+		('Pinot Meunier'),
+		('Pinot Noir'),
+		('Pinotage'),
+		('Port'),
+		('Retsina'),
+		('Rosé'),
+		('Roussanne'),
+		('Sangiovese'),
+		('Sauterns'),
+		('Sauvignon Blanc'),
+		('Sémillon'),
+		('Sherry'),
+		('Soave'),
+		('Tokay'),
+		('Traminer'),
+		('Trebbiano'),
+		('Ugni Blanc'),
+		('Valpolicella'),
+		('Verdicchio'),
+		('Viognier'),
+		('Zinfandel');
 
 -- --------------------------------------------------------------------------------------------------------
 -- Create Wine table
@@ -1226,32 +1316,122 @@ CREATE TABLE IF NOT EXISTS Grape_Variety (
 DROP TABLE IF EXISTS Wine;
 
 CREATE TABLE IF NOT EXISTS Wine (
-	Wine_Code INT NOT NULL,
+	Wine_Code INT NOT NULL auto_increment,
 	Wine_Color_Code INT NOT NULL,
 	Wine_Country_Code_Num INT NOT NULL,
-	Grape_Variety_Code INT NOT NULL,
-	Wine_Appellation_Code INT NOT NULL,
-	Wine_Vineyard_Code INT NOT NULL,
+	Wine_Variety_Code INT NOT NULL,
+	Wine_Appellation_Code INT,
 	Wine_Vintage INT NOT NULL,
-	Wine_Food_Code INT NOT NULL,
-	Wine_Occassion_Code INT NOT NULL,
 	Wine_Name VARCHAR(50),
 	Wine_Price DECIMAL NOT NULL,
-	Years_Lay_Down INT NOT NULL,
+	Qty_On_Hand int not null,
 	
 	PRIMARY KEY (Wine_Code),
 	UNIQUE INDEX (Wine_Code),
 	
 	FOREIGN KEY (Wine_Color_Code) REFERENCES Colors(Color_Code) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (Wine_Country_Code_Num) REFERENCES Country(Country_Code_Num) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (Grape_Variety_Code) REFERENCES Grape_Variety(Grape_Variety_Code) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (Wine_Appellation_Code) REFERENCES Appellation(Appellation_Code) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (Wine_Vineyard_Code) REFERENCES Vineyard(Vineyard_Code) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (Wine_Vintage) REFERENCES Vintage(Vintage_Year) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (Wine_Food_Code) REFERENCES Food(Food_Code) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (Wine_Occassion_Code) REFERENCES Occassion(Occassion_Code) ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY (Wine_Variety_Code) REFERENCES Grape_Variety(Grape_Variety_Code) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (Wine_Appellation_Code) REFERENCES Appellation(Appellation_Code) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 # DESCRIBE Wine;
 
+-- --------------------------------------------------------------------------------------------------------
+-- Insert data into Wine table
+-- --------------------------------------------------------------------------------------------------------
 
+insert into wine (wine_color_code,wine_country_code_num,wine_variety_code,wine_appellation_code,wine_vintage,wine_name,wine_price,qty_on_hand)
+	values
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Pinot Noir'),(select appellation_code from appellation where appellation_name = 'Los Carneros AVA'),2015,'Sterling Carneros Pinot Noir',32.99,1),
+		((select color_code from colors where color_name = 'Rose'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Pinot Noir and Zinfandel'),(select appellation_code from appellation where appellation_name = 'Napa Valley AVA'),0,'Chandon Sparkling Red',30.00,1),
+		((select color_code from colors where color_name = 'White'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Chardonnay'),(select appellation_code from appellation where appellation_name = 'Santa Cruz Mountains AVA'),0,'Almendral',18.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Pinot Noir'),(select appellation_code from appellation where appellation_name = 'Los Carneros AVA'),2015,'Kirkland Carneros Pinot Noir',10.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'South Africa'),(select grape_variety_code from grape_variety where grape_variety_name = 'Shiraz and Viognier'),(select appellation_code from appellation where appellation_name = 'Coastal Region'),2016,'Arabella Reserve Shiraz Viognier',11.99,1),
+		((select color_code from colors where color_name = 'White'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Sauvignon Blanc and Semillon'),(select appellation_code from appellation where appellation_name = 'North Coast AVA'),2012,'Envy Wines Late Harvest 2012',11.99,1),
+		((select color_code from colors where color_name = 'White'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Pinot Gris'),(select appellation_code from appellation where appellation_name = 'Oak Knoll District of Napa Valley AVA'),2014,'Sterling Oak Knoll Pinot Gris',26.00,1),
+		((select color_code from colors where color_name = 'White'),(select country_code_num from country where country_name = 'South Africa'),(select grape_variety_code from grape_variety where grape_variety_name = 'Chenin Blanc'),(select appellation_code from appellation where appellation_name = 'Coastal Region'),2016,'Heuningby Wellington Chenin Blanc 2016',13.70,1),
+		((select color_code from colors where color_name = 'Rose'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Sangiovese'),(select appellation_code from appellation where appellation_name = 'Napa Valley AVA'),2016,'Silverado Sangiovese Rosato',25.00,1);
+		((select color_code from colors where color_name = 'White'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Semillon'),(select appellation_code from appellation where appellation_name = 'Livermore Valley AVA'),2016,'Steven Kent Semillon',24.00,1),
+		((select color_code from colors where color_name = 'White'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Chardonnay'),(select appellation_code from appellation where appellation_name = 'Napa Valley AVA'),2014,'Sterling Vineyards Reserve Chardonnay',40.00,2),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Pinot Noir'),(select appellation_code from appellation where appellation_name = 'Los Carneros AVA'),2012,'Madonna Estate Pinot Noir',20.00,2),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Pinot Noir'),(select appellation_code from appellation where appellation_name = 'Los Carneros AVA'),2008,'Madonna Estate Pinot Noir',20.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Zinfandel'),(select appellation_code from appellation where appellation_name = 'Rockpile AVA'),2014,'Sterling Rockpile Zinfandel',60.00,2),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Zinfandel'),(select appellation_code from appellation where appellation_name = 'Livermore Valley AVA'),2014,'Occasio Zinfandel',39.00,2),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Merlot'),(select appellation_code from appellation where appellation_name = 'Livermore Valley AVA'),2014,'Steven Kent BDX Merlot',48.00,2),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Zinfandel'),(select appellation_code from appellation where appellation_name = 'St. Helena AVA'),2013,'Rosenblum RC 11 Zinfandel',41.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Zinfandel'),(select appellation_code from appellation where appellation_name = 'Rockpile AVA'),2013,'Rosenblum Rockpile Vineyard Zinfandel',41.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Zinfandel'),(select appellation_code from appellation where appellation_name = 'Napa Valley AVA'),2012,'Rosenblum RC 12 Zinfandel',41.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Zinfandel'),(select appellation_code from appellation where appellation_name = 'Sonoma Valley AVA'),2012,'Rosenblum Maggies Reserve Zinfandel',41.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Zinfandel'),(select appellation_code from appellation where appellation_name = 'Dry Creek Valley AVA'),2016,'crowdpleazin',15.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Zinfandel'),(select appellation_code from appellation where appellation_name = 'Rutherford AVA'),2012,'Rosenblum RC 10 Zinfandel',40.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Merlot'),(select appellation_code from appellation where appellation_name = 'Napa Valley AVA'),2013,'Envy Reserve Estate Merlot',38.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Merlot'),(select appellation_code from appellation where appellation_name = 'Livermore Valley AVA'),2014,'Nottingham Cellars Merlot',32.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Merlot'),(select appellation_code from appellation where appellation_name = 'Napa Valley AVA'),2014,'Sterling Platinum Merlot',55.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Petite Sirah'),(select appellation_code from appellation where appellation_name = 'Central Coast AVA'),2010,'Wild Eye Petite Sirah',12.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Malbec'),(select appellation_code from appellation where appellation_name = 'Lodi AVA'),2016,'Karen Birmingham Malbec',17.49,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Petite Sirah'),(select appellation_code from appellation where appellation_name = 'Calistoga AVA'),2012,'Sterling Petite Sirah',40.00,2),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Petite Sirah'),(select appellation_code from appellation where appellation_name = 'Calistoga AVA'),2013,'Sterling Petite Sirah',40.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Syrah'),(select appellation_code from appellation where appellation_name = 'Livermore Valley AVA'),2012,'Occasio Syrah',38.00,2),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Pinot Noir'),(select appellation_code from appellation where appellation_name = 'California'),2016,'Akiyoshi Pinot Noir',18.99,2),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Malbec'),(select appellation_code from appellation where appellation_name = 'Livermore Valley AVA'),2012,'Occasio Heritage Malbec',60.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Petite Sirah'),(select appellation_code from appellation where appellation_name = 'Napa Valley AVA'),2015,'Envy Fortuna Petite Sirah',49.00,3),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Petite Sirah'),(select appellation_code from appellation where appellation_name = 'Napa Valley AVA'),2015,'Envy Calistoga Estate Petite Sirah',49.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Petite Sirah'),(select appellation_code from appellation where appellation_name = 'Napa Valley AVA'),2014,'Envy Fortuna Petite Sirah',49.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Livermore Valley AVA'),2014,'Occasio Cabernet Sauvignon',40.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Napa Valley AVA'),2014,'Silverado Estate Cabernet Sauvignon',50.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Calistoga AVA'),2014, 'Sterling Platinum Cab',75.00,2),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Yountville AVA'),2014,'Sterling Sleeping Lady Cab',125.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Napa Valley AVA'),2014,'Sterling Yates Family Vineyard Cab',85.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Franc'),(select appellation_code from appellation where appellation_name = 'Calistoga AVA'),2014,'Sterling Cab Franc',40.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Calistoga AVA'),2014,'Envy Reserve Cab',54.00,3),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Diamond Mountain District AVA'),2012,'Sterling DM Cab',90.00,2),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Napa Valley AVA'),2013,'Madonna Estate Reserve Cab',34.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Napa Valley AVA'),2014,'Envy Estate Cab',45.00,2),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Rutherford AVA'),2013,'Sullivan Rutherford Cabernet Sauvignon',85.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Livermore Valley AVA'),2014,'Nottingham Cellars Cabernet Sauvignon',36.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Napa Valley AVA'),2014,'Sterling Iridium',250.00,2),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Sangiovese'),(select appellation_code from appellation where appellation_name = 'Napa Valley AVA'),2014,'Silverado Sangiovese',30.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon and Sangiovese'),(select appellation_code from appellation where appellation_name = 'Napa Valley AVA'),2014,'Silverado Club Red',75.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'Australia'),(select grape_variety_code from grape_variety where grape_variety_name = 'Shiraz'),(select appellation_code from appellation where appellation_name = 'Australia'),2016,'The Hero Shiraz',21.99,2),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Stags Leap District AVA'),2014,'Silverado Solo Cab',125.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'Portugal'),(select grape_variety_code from grape_variety where grape_variety_name = 'Red Blend'),(select appellation_code from appellation where appellation_name = 'Vinho Verde DOC'),2015,'Montaria Reserva Red Blend',21.99,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'France'),(select grape_variety_code from grape_variety where grape_variety_name = 'Red Blend'),(select appellation_code from appellation where appellation_name = 'Minervois AOC'),2015,'Benjamin Darnault Minervois',9.99,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Red Blend'),(select appellation_code from appellation where appellation_name = 'El Dorado AVA'),2016,'Coloma Red Wine Blend',14.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Red Blend'),(select appellation_code from appellation where appellation_name = 'Calistoga AVA'),2013,'Sterling Winemakers Select Red Blend',65.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Red Blend'),(select appellation_code from appellation where appellation_name = 'Calistoga AVA'),2012,'Sterling Winemakers Select Red Blend',65.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cuvee'),(select appellation_code from appellation where appellation_name = 'Livermore Valley AVA'),2015,'Nottingham Cellars Cuvee',24.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Diamond Mountain District AVA'),2014,'Sterling DM Cab',90.00,1),	
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Alexander Valley AVA'),2014,'Kirkland 2014 Cab',12.99,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Lodi AVA'),2014,'Noble Vines 337 Cab',15.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Santa Cruze Mountains AVA'),2013,'PV Santa Cruz Mountains Cab',38.00,5),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Oakville AVA'),2006,'Pavi Wines - Aetna Springs Cab',39.99,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Red Blend'),(select appellation_code from appellation where appellation_name = 'Calistoga AVA'),2015,'Envy Bee Bees Blend',45.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Los Carneros AVA'),2006,'Madonna Estate NV Cab',50.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'California'),2014,'Beringer Founders Estate Cab',30.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Napa Valley AVA'),2010,'Madonna Estate Reserve Cab',50.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Coombsville AVA'),2013,'Silverado Geo Cab',75.00,2),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'California'),2015,'Kirkland California Cab',22.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'France'),(select grape_variety_code from grape_variety where grape_variety_name = 'Syrah'),(select appellation_code from appellation where appellation_name = 'Côte-Rôtie AOC'),2015,'Vin du Jour Syrah',60.00,2),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Merlot'),(select appellation_code from appellation where appellation_name = 'Napa Valley AVA'),2014,'Sterling Platinum Merlot',65.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Cabernet Sauvignon'),(select appellation_code from appellation where appellation_name = 'Oakville AVA'),2014,'Robert Mondavi 50th Anniversary Cab',30.00,1),
+		((select color_code from colors where color_name = 'White'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Chardonnay'),(select appellation_code from appellation where appellation_name = 'Santa Cruz Mountains AVA'),2014,'Portola Valley 2014 Chardonnay',32.00,4),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Zinfandel'),(select appellation_code from appellation where appellation_name = 'Sonoma County AVA'),2014,'Kirkland Old Vine Zin',10.00,1),
+		((select color_code from colors where color_name = 'Red'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Pinot Noir'),(select appellation_code from appellation where appellation_name = 'Santa Cruz Mountains AVA'),2012,'Portola Valley Santa Cruz Pinot',38.00,2),
+		((select color_code from colors where color_name = 'White'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Malvasia Bianca'),(select appellation_code from appellation where appellation_name = 'California'),2015,'Sterling Malvasia Bianca',32.00,1),
+		((select color_code from colors where color_name = 'White'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Gewurtztraminer'),(select appellation_code from appellation where appellation_name = 'Los Carneros AVA'),2015,'Madonna Estate Gewurtztraminer',28.00,1),
+		((select color_code from colors where color_name = 'White'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Chardonnay'),(select appellation_code from appellation where appellation_name = 'Rutherford AVA'),2015,'Sullivan Chardonnay',49.00,1),
+		((select color_code from colors where color_name = 'White'),(select country_code_num from country where country_name = 'United States of America'),(select grape_variety_code from grape_variety where grape_variety_name = 'Chardonnay'),(select appellation_code from appellation where appellation_name = 'Oak Knoll District of Napa Valley AVA'),2015,'Carmenet Chardonnay',8.00,1);
+		
+-- --------------------------------------------------------------------------------------------------------
+-- update quantity on hand of a bottle once drank
+-- --------------------------------------------------------------------------------------------------------		
+		
+update wine set qty_on_hand = 0 where wine_code = 132;
+		
+-- --------------------------------------------------------------------------------------------------------
+-- create a stored procedure to add to qty on hand of wine when new wine is purchased
+-- --------------------------------------------------------------------------------------------------------
+
+
+		
