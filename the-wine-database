@@ -1428,10 +1428,263 @@ insert into wine (wine_color_code,wine_country_code_num,wine_variety_code,wine_a
 -- --------------------------------------------------------------------------------------------------------		
 		
 update wine set qty_on_hand = 0 where wine_code = 132;
+
+-- --------------------------------------------------------------------------------------------------------
+-- alter wine table to force wine_name for create procedure to add wine
+-- --------------------------------------------------------------------------------------------------------
+
+alter table wine modify wine_name varchar(50) not null;
+
+-- --------------------------------------------------------------------------------------------------------
+-- describe wine table after modifying wine_name column to force not null as a check if it worked
+-- --------------------------------------------------------------------------------------------------------
+
+describe wine;
 		
 -- --------------------------------------------------------------------------------------------------------
 -- create a stored procedure to add to qty on hand of wine when new wine is purchased
 -- --------------------------------------------------------------------------------------------------------
 
+DROP PROCEDURE IF EXISTS AddWine; ### here is the code to also drop the procedure if needed.
+DELIMITER $$
+CREATE PROCEDURE AddWine(_wcolor varchar(10),_wcountry int,_wvariety int,_wappellation int,_wvintage int,_wname varchar(50),_wprice decimal,_wqty int)
+BEGIN
+	DECLARE wineCount INT;
+	DECLARE resultId INT unsigned;
+	DECLARE msg varchar(100);
+	SET wineCount = (
+		SELECT COUNT(wine_code)
+		FROM Wine 
+		WHERE Wine_Name = _wname
+		);
+	IF wineCount = 0 THEN
+		INSERT INTO Wine (Wine_Color_Code,Wine_Country_Code_Num,Wine_Variety_Code,Wine_Appellation_Code,Wine_Vintage,Wine_Name,Wine_Price,Qty_On_Hand)
+		VALUES (_wcolor,_wcountry,_wvariety,_wappellation,_wvintage,_wname,_wprice,_wqty);
+	SET resultId = last_insert_id();
+	SET msg = 'Wine added.';
+	ELSE
+	SET resultId = 0;
+	SET msg = 'Wine already exists.';
+	END IF;
 
-		
+SELECT resultId, msg;
+END$$
+DELIMITER ;
+	
+-- --------------------------------------------------------------------------------------------------------
+-- create a view to see what wines you have from 3 years ago
+-- --------------------------------------------------------------------------------------------------------
+
+CREATE VIEW ThreeYearWines AS
+SELECT Wine_Code,Wine_Name,Wine_Vintage,Qty_On_Hand FROM wine
+	WHERE Wine_Vintage = (SELECT YEAR(CURDATE()) - 3);
+
+-- --------------------------------------------------------------------------------------------------------
+-- create a view to see what wines you have from 2 years ago
+-- --------------------------------------------------------------------------------------------------------
+
+CREATE VIEW TwoYearWines AS
+SELECT Wine_Code,Wine_Name,Wine_Vintage,Qty_On_Hand FROM wine
+	WHERE Wine_Vintage = (SELECT YEAR(CURDATE()) - 2);
+	
+-- --------------------------------------------------------------------------------------------------------
+-- create a view to see what wines you have from 1 years ago
+-- --------------------------------------------------------------------------------------------------------
+
+CREATE VIEW OneYearWines AS
+SELECT Wine_Code,Wine_Name,Wine_Vintage,Qty_On_Hand FROM wine
+	WHERE Wine_Vintage = (SELECT YEAR(CURDATE()) - 1);	
+
+-- --------------------------------------------------------------------------------------------------------
+-- create a view to see what wines you have this year
+-- --------------------------------------------------------------------------------------------------------
+
+CREATE VIEW CurrentYearWines AS
+SELECT Wine_Code,Wine_Name,Wine_Vintage,Qty_On_Hand FROM wine
+	WHERE Wine_Vintage = (SELECT YEAR(CURDATE()));
+	
+-- --------------------------------------------------------------------------------------------------------
+-- create a view to see what wines you have from 4 years ago
+-- --------------------------------------------------------------------------------------------------------
+
+CREATE VIEW FourYearWines AS
+SELECT Wine_Code,Wine_Name,Wine_Vintage,Qty_On_Hand FROM wine
+	WHERE Wine_Vintage = (SELECT YEAR(CURDATE()) - 4);	
+
+-- --------------------------------------------------------------------------------------------------------
+-- create a view to see what wines you have from 5 years ago
+-- --------------------------------------------------------------------------------------------------------
+
+CREATE VIEW FiveYearWines AS
+SELECT Wine_Code,Wine_Name,Wine_Vintage,Qty_On_Hand FROM wine
+	WHERE Wine_Vintage = (SELECT YEAR(CURDATE()) < SELECT YEAR(CURDATE()) - 5);	
+	
+-- --------------------------------------------------------------------------------------------------------
+-- create a view to see what the oldest wines are
+-- --------------------------------------------------------------------------------------------------------
+drop view if exists oldestwines;
+CREATE VIEW OldestWines AS
+SELECT Wine_Code,Wine_Name,Wine_Vintage,Qty_On_Hand FROM wine
+	WHERE Wine_Vintage < 2012;
+	
+-- --------------------------------------------------------------------------------------------------------
+-- create a procedure to add a color to the colors table
+-- --------------------------------------------------------------------------------------------------------
+
+describe colors; ### describe the colors table so we can determine what we need to include in our add procedure
+
+DROP PROCEDURE IF EXISTS AddColor;
+DELIMITER $$
+CREATE PROCEDURE AddColor(_cname varchar(10))
+BEGIN
+	DECLARE colorCount INT;
+	DECLARE resultId INT unsigned;
+	DECLARE msg varchar(100);
+	SET colorCount = (
+		SELECT COUNT(color_code)
+		FROM Colors 
+		WHERE Color_Name = _cname
+		);
+	IF colorCount = 0 THEN
+		INSERT INTO Colors (Color_Name) 
+		VALUES (_cname);
+	SET resultId = last_insert_id();
+	SET msg = 'Color inserted.';
+	ELSE
+	SET resultId = 0;
+	SET msg = 'Color already exists.';
+	END IF;
+
+SELECT resultId, msg;
+END$$
+DELIMITER ;
+
+### let's test out and see if our color works by checking on white, which we know is already in the table
+
+call
+	AddColor ('White'); ### it works!
+
+-- --------------------------------------------------------------------------------------------------------
+-- create a view to see wines in stock with a price less or equal to $30
+-- --------------------------------------------------------------------------------------------------------
+
+describe wine; ### describe wine table to ensure we don't miscode anything
+
+drop view if exists wineslessthan30;
+CREATE VIEW wineslessthan30 AS
+SELECT Wine_Name,Wine_Vintage,Qty_On_Hand,Wine_Price FROM wine
+	WHERE wine_price <= 30 and qty_on_hand > 0
+	order by wine_price desc;
+	
+select * from wineslessthan30; ### call it and see what wines are less than 30!
+
+-- --------------------------------------------------------------------------------------------------------
+-- create a view to see wines in stock with a price more than $30 and less or equal to $50
+-- --------------------------------------------------------------------------------------------------------
+
+drop view if exists winesbetween30and50;
+CREATE VIEW winesbetween30and50 AS
+SELECT Wine_Name,Wine_Vintage,Qty_On_Hand,Wine_Price FROM wine
+	WHERE wine_price > 30 and wine_price <= 50 and qty_on_hand > 0
+	order by wine_price desc;
+	
+select * from winesbetween30and50; ### call it and see what wines you have between $30 and $50
+
+-- --------------------------------------------------------------------------------------------------------
+-- create a view to see wines in stock with a price more than $50
+-- --------------------------------------------------------------------------------------------------------
+
+drop view if exists winesmorethan50;
+CREATE VIEW winesmorethan50 AS
+SELECT Wine_Name,Wine_Vintage,Qty_On_Hand,Wine_Price FROM wine
+	WHERE wine_price > 50 and qty_on_hand > 0
+	order by wine_price desc;
+	
+select * from winesmorethan50; ### call it and see what wines you have w/ a price more than $50
+
+select * from wine where wine_name = 'Sterling Iridium'; ### this gives us nonsensical codes so we don't know much about the wine
+
+/* join information from country and appellation tables to wine table to get the names of countries and appellations the wine is from */
+
+select wine.wine_name as 'Wine', country.country_name as 'Country', appellation.appellation_name as 'Appellation'
+	from wine
+	JOIN appellation ON appellation.appellation_code = wine.wine_appellation_code
+	JOIN country ON country.country_code_num = appellation.appellation_country_code_num;
+	
+/* now let's see if we can view all wines NOT from the united states */
+
+select wine.wine_name as 'Wine', country.country_name as 'Country', appellation.appellation_name as 'Appellation'
+	from wine
+	JOIN appellation ON appellation.appellation_code = wine.wine_appellation_code
+	JOIN country ON country.country_code_num = appellation.appellation_country_code_num
+	where country.country_name <> 'United States of America';
+	
+/* now let's see if we can view all wines FROM the United States */
+
+select wine.wine_name as 'Wine', country.country_name as 'Country', appellation.appellation_name as 'Appellation'
+	from wine
+	JOIN appellation ON appellation.appellation_code = wine.wine_appellation_code
+	JOIN country ON country.country_code_num = appellation.appellation_country_code_num
+	where country.country_name = 'United States of America';
+
+/* now let's make our view of wines from the US coded into a view, and make sure we have them in stock -- i.e. let's only see wines from the us we have on hand. let's also look at the grape variety */
+
+drop view if exists uswinesonhand;
+create view uswinesonhand as
+select wine.wine_name as 'Wine', country.country_name as 'Country', appellation.appellation_name as 'Appellation', grape_variety.grape_variety_name as 'Varietal'
+	from wine
+	join grape_variety on grape_variety.grape_variety_code = wine.wine_variety_code
+	JOIN appellation ON appellation.appellation_code = wine.wine_appellation_code
+	JOIN country ON country.country_code_num = appellation.appellation_country_code_num
+	where country.country_name = 'United States of America' and qty_on_hand > 0
+	order by wine.wine_name;
+	
+select * from uswinesonhand;
+
+/* now let's make our view of wines not from the US coded into a view, and make sure we have them in stock -- i.e. let's only see wines from the us we have on hand. let's also look at the grape variety */
+
+drop view if exists intlwinesonhand;
+create view intlwinesonhand as
+select wine.wine_name as 'Wine', country.country_name as 'Country', appellation.appellation_name as 'Appellation', grape_variety.grape_variety_name as 'Varietal'
+	from wine
+	join grape_variety on grape_variety.grape_variety_code = wine.wine_variety_code
+	JOIN appellation ON appellation.appellation_code = wine.wine_appellation_code
+	JOIN country ON country.country_code_num = appellation.appellation_country_code_num
+	where country.country_name <> 'United States of America' and qty_on_hand > 0
+	order by wine.wine_name;
+	
+select * from intlwinesonhand;
+
+/* now i want to see how many international wines I have with a price > $50 */
+
+select wine.wine_name as 'Wine', country.country_name as 'Country', appellation.appellation_name as 'Appellation', grape_variety.grape_variety_name as 'Varietal'
+	from wine
+	join grape_variety on grape_variety.grape_variety_code = wine.wine_variety_code
+	JOIN appellation ON appellation.appellation_code = wine.wine_appellation_code
+	JOIN country ON country.country_code_num = appellation.appellation_country_code_num
+	where country.country_name <> 'United States of America' and qty_on_hand > 0 and wine_price > 50
+	order by wine.wine_name;
+
+/* view for wines out of stock */
+
+drop view if exists winesoutofstock;
+CREATE VIEW winesoutofstock AS
+SELECT Wine_Name,Wine_Vintage,Grape_Variety_Name,Qty_On_Hand,Wine_Price 
+	FROM wine
+	join grape_variety on grape_variety.grape_variety_code = wine.wine_variety_code
+	WHERE qty_on_hand = 0
+	order by wine_name;
+	
+select * from winesoutofstock;
+
+
+
+
+
+
+
+
+
+
+
+
