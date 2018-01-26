@@ -1677,7 +1677,16 @@ SELECT Wine_Name,Wine_Vintage,Grape_Variety_Name,Qty_On_Hand,Wine_Price
 	
 select * from winesoutofstock;
 
+#select everything from wine table with a quantity
+select * from wine where qty_on_hand>1 order by wine_name;
 
+#delete an entry from the wine table & select for review
+delete from wine where wine_code = 174;
+select * from wine where qty_on_hand>0 order by wine_name;
+
+#update quantity on hand in wine table & select for review
+update wine set qty_on_hand=1 where wine_code=135;
+select * from wine where qty_on_hand>0 order by wine_name;
 
 
 
